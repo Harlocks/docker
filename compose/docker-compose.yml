@@ -1,0 +1,50 @@
+version: "3.9"
+
+services:
+ # PORTAINER
+  portainer:
+    image: portainer/portainer-ce
+    ports:
+      - "9000:9000"
+    volumes:
+      - "/var/run/docker.sock:/var/run/docker.sock"
+      - "./volumes/portainer/:/data"
+    restart: always
+    networks:
+      - central
+
+  # VISUAL STUDIO CODE
+  vscode:
+    image: codercom/code-server:latest
+    ports:
+      - "8080:8080"
+    volumes_from:
+      - minecraft
+    environment:
+      PASSWORD: "123"
+    restart: always
+    networks:
+      - central
+
+  # SERVIDOR DO MINECRAFT
+  minecraft:
+    image: itzg/minecraft-server
+    ports:
+      - "25565:25565"
+    environment:
+      EULA: true
+      TYPE: NEOFORGE
+      VERSION: "1.20.1"
+      NEOFORGE_VERSION: "47.1.104"
+    volumes:
+      - "./volumes/minecraft/:/data"
+    restart: always
+    networks:
+      - central
+
+networks:
+  central:
+    driver: bridge
+
+volumes:
+  portainer_data:
